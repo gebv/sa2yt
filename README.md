@@ -1,3 +1,3 @@
-# sa2yt
+# sayto
 
 Slack actions to YouTrack
