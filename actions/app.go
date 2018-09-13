@@ -7,9 +7,9 @@ import (
 	"github.com/gobuffalo/envy"
 	"github.com/unrolled/secure"
 
+	"github.com/gebv/sayto/models"
 	"github.com/gobuffalo/x/sessions"
 	"github.com/rs/cors"
-	"github.com/sayto/models"
 )
 
 // ENV is used to help switch settings based on where the

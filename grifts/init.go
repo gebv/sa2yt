@@ -1,8 +1,8 @@
 package grifts
 
 import (
+	"github.com/gebv/sayto/actions"
 	"github.com/gobuffalo/buffalo"
-	"github.com/sayto/actions"
 )
 
 func init() {

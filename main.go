@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/sayto/actions"
+	"github.com/gebv/sayto/actions"
 )
 
 // main is the starting point to your Buffalo application.
