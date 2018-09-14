@@ -47,6 +47,7 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 
+		app.POST("/tasks", TasksCreate)
 	}
 
 	return app

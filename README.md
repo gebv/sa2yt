@@ -1,3 +1,12 @@
+# Deploy on Heroku
+1. made new build
+  $ GOOS=linux buffalo build -o build/heroku
+2. create git commit
+  $ git add .
+  $ git commit -m "Commit message"
+3. push to heroku
+  $ git push heroku master
+
 # Welcome to Buffalo!
 
 Thank you for choosing Buffalo for your web development needs.
