@@ -13,8 +13,8 @@ func TasksCreate(c buffalo.Context) error {
 
 	err := YouTrackAPI.CreateIssue()
 	if err != nil {
-		return c.Render(200, r.Plain(fmt.Sprintf("Error: %v", err)))
+		return c.Render(200, r.String(fmt.Sprintf("Error: %v", err)))
 	}
 
-	return c.Render(200, r.Plain("All OK"))
+	return c.Render(200, r.String("All OK"))
 }

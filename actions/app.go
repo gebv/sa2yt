@@ -6,10 +6,9 @@ import (
 	"github.com/gobuffalo/buffalo/middleware"
 	"github.com/gobuffalo/buffalo/middleware/ssl"
 	"github.com/gobuffalo/envy"
+	"github.com/gobuffalo/x/sessions"
 	"github.com/unrolled/secure"
 
-	"github.com/gebv/sayto/models"
-	"github.com/gobuffalo/x/sessions"
 	"github.com/rs/cors"
 )
 
@@ -51,7 +50,7 @@ func App() *buffalo.App {
 		// Wraps each request in a transaction.
 		//  c.Value("tx").(*pop.PopTransaction)
 		// Remove to disable this.
-		app.Use(middleware.PopTransaction(models.DB))
+		// app.Use(middleware.PopTransaction(models.DB)) // TODO: enable in Future
 
 		app.GET("/", HomeHandler)
 
