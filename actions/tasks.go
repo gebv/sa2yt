@@ -11,5 +11,10 @@ func TasksCreate(c buffalo.Context) error {
 	// fmt.Printf("PARAMS: %v", c.Data())
 	fmt.Printf("Form: %v \n", c.Request().Form)
 
-	return c.Render(200, r.JSON(map[string]string{"status": "OK"}))
+	err := YouTrackAPI.CreateIssue()
+	if err != nil {
+		return c.Render(200, r.Plain(fmt.Sprintf("Error: %v", err)))
+	}
+
+	return c.Render(200, r.Plain("All OK"))
 }

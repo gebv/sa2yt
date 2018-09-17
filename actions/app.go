@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"github.com/gebv/sayto/lib"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/middleware"
 	"github.com/gobuffalo/buffalo/middleware/ssl"
@@ -15,6 +16,13 @@ import (
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
+
+// YouTrackAPI - obejct for YouTrack API
+var YouTrackAPI = &lib.YouTrackAPI{
+	Token:  envy.Get("YOUTRACK_TOKEN", ""),
+	Domain: envy.Get("YOUTRACK_DOMAIN", ""),
+}
+
 var app *buffalo.App
 
 // App is where all routes and middleware for buffalo
