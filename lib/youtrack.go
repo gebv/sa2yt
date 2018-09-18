@@ -18,9 +18,11 @@ type YouTrackAPI struct {
 func (api *YouTrackAPI) CreateIssue() error {
 	// api.sendRequest("GET", &url.URL{Path: "rest/issue/NTA-1"})
 
-	// api.sendRequest("PUT", &url.URL{Path: "/rest/issue?project=NTA&summary=new&description=description"})
-	api.sendRequest("GET", &url.URL{Path: "rest/admin/project"})
+	// api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/permission"})
+	api.sendRequest("PUT", &url.URL{Path: "youtrack/rest/issue?project=NTA&summary=new+issue&description=description+of+new+issue&permittedGroup=all+users"})
+	api.sendRequest("PUT", &url.URL{Path: "rest/issue?project=NTA&summary=new&description=description"})
 
+	// api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/project"})
 	return nil
 }
 
