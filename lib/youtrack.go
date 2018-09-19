@@ -1,9 +1,8 @@
 package lib
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -16,47 +15,48 @@ type YouTrackAPI struct {
 
 // CreateIssue - create New Issue in YouTrack
 func (api *YouTrackAPI) CreateIssue() error {
-	// api.sendRequest("GET", &url.URL{Path: "rest/issue/NTA-1"})
+	api.sendRequest("PUT", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
+		"project":     "NTA",
+		"summary":     "New Issue from API",
+		"description": "Full issue description",
+	})
 
-	// api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/permission"})
-	api.sendRequest("PUT", &url.URL{Path: "youtrack/rest/issue?project=NTA&summary=new+issue&description=description+of+new+issue&permittedGroup=all+users"})
-	api.sendRequest("PUT", &url.URL{Path: "rest/issue?project=NTA&summary=new&description=description"})
-
-	// api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/project"})
 	return nil
 }
 
-func (api *YouTrackAPI) sendRequest(method string, path *url.URL) error {
+func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[string]string) (*http.Response, error) {
 	client := &http.Client{}
 	baseURL, err := url.Parse(api.Domain)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	req, err := http.NewRequest(method, baseURL.ResolveReference(path).String(), nil)
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.Token))
+	request, err := http.NewRequest(method, baseURL.ResolveReference(path).String(), prepareParams(params))
+	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	request.Header.Set("Accept", "application/json")
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.Token))
 
 	fmt.Println("URL --- ", baseURL.ResolveReference(path).String())
 	fmt.Println("TOKEN --- ", fmt.Sprintf("Bearer %s", api.Token))
-	fmt.Printf("REQUEST --- %v \n", req)
+	fmt.Printf("REQUEST --- %v \n", request)
 
-	resp, err := client.Do(req)
+	response, err := client.Do(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Println("RESPPPPP", resp)
+	fmt.Println("RESPPPPP", response)
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	return response, nil
+}
+
+func prepareParams(params map[string]string) *bytes.Buffer {
+	buffer := new(bytes.Buffer)
+	values := url.Values{}
+	for param, value := range params {
+		values.Set(param, value)
 	}
 
-	var jsonBody interface{}
-	json.Unmarshal(body, &jsonBody)
-	fmt.Printf("RESP BODY %v \n", jsonBody)
-
-	return nil
+	buffer.WriteString(values.Encode())
+	return buffer
 }
