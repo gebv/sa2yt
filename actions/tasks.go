@@ -13,8 +13,11 @@ import (
 func TasksCreate(c buffalo.Context) error {
 	fmt.Printf("Form: %v \n", c.Request().Form)
 
-	texts := strings.Split(c.Request().Form.Get("text"), "#")
-	fmt.Printf("TEXTS:   %v\n", texts)
+	// texts := strings.Split(c.Request().Form.Get("text"), "#")
+	splitFunc := func(c rune) bool { return c == '#' }
+	texts := strings.FieldsFunc(c.Request().Form.Get("text"), splitFunc)
+
+	fmt.Printf("TEXTS:   %v, %d\n", texts, len(texts))
 	if len(texts) < 2 {
 		return c.Render(200, r.JSON(lib.SlackResponse{
 			ResponseType: "ephemeral",
