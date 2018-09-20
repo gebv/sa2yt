@@ -55,6 +55,7 @@ func App() *buffalo.App {
 		app.GET("/", HomeHandler)
 
 		app.POST("/tasks", TasksCreate)
+		app.POST("/slack_actions", SlackActionsCreate)
 	}
 
 	return app
