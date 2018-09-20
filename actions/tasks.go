@@ -24,11 +24,11 @@ func TasksCreate(c buffalo.Context) error {
 		}))
 	}
 
-	projectID := texts[0]
-	title := texts[1]
+	projectID := strings.Trim(texts[0], " ")
+	title := strings.Trim(texts[1], " ")
 	description := ""
 	if len(texts) == 3 {
-		description = texts[2]
+		description = strings.Trim(texts[2], " ")
 	}
 
 	urlToTask, err := YouTrackAPI.CreateIssue(projectID, title, description)
