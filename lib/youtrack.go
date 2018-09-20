@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // YouTrackAPI - struct for youtrack api
@@ -31,7 +32,8 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 	fmt.Println("Create Issue resp: ", response)
 
-	return response.Header.Get("Location"), nil
+	restURL := response.Header.Get("Location")
+	return strings.Replace(restURL, "/rest", "", 1), nil
 }
 
 func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[string]string) (*http.Response, error) {
