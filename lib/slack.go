@@ -100,6 +100,10 @@ func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
 	}
 
 	fmt.Println("RESPPPPP", response)
+	var respBody []byte
+	response.Body.Read(respBody)
+
+	fmt.Println("RESPPPPP", string(respBody))
 
 	return nil
 }
