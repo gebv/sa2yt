@@ -26,20 +26,24 @@ func SlackActionsCreate(c buffalo.Context) error {
 		fmt.Println("responseURL:  ", encodedCallback.ResponseURL)
 		lib.OpenDialogInSlack(
 			&lib.SlackDialogResponse{
-				CallbackID:  encodedCallback.CallbackID,
-				State:       "Limo",
-				Title:       "Request a Ride",
-				SubmitLabel: "Request",
-				Elements: []lib.SlackDialogResponseElement{
-					{
-						Type:  "text",
-						Label: "Pickup Location",
-						Name:  "loc_origin",
-					},
-					{
-						Type:  "text",
-						Label: "Dropoff Location",
-						Name:  "loc_destination",
+				Token:     encodedCallback.Token,
+				TriggerID: encodedCallback.TriggerID,
+				Dialog: lib.SlackDialog{
+					CallbackID:  encodedCallback.CallbackID,
+					State:       "Limo",
+					Title:       "Request a Ride",
+					SubmitLabel: "Request",
+					Elements: []lib.SlackDialogResponseElement{
+						{
+							Type:  "text",
+							Label: "Pickup Location",
+							Name:  "loc_origin",
+						},
+						{
+							Type:  "text",
+							Label: "Dropoff Location",
+							Name:  "loc_destination",
+						},
 					},
 				},
 			},

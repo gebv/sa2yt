@@ -59,8 +59,15 @@ type SlackActionCallback struct {
 	ResponseURL string `json:"response_url"`
 }
 
-// SlackDialogResponse - response for dialog creating
+// SlackDialogResponse - response for dialog end-point
 type SlackDialogResponse struct {
+	Token     string      `json:"token"`
+	TriggerID string      `json:"trigger_id"`
+	Dialog    SlackDialog `json:"dialog"`
+}
+
+// SlackDialog - struct for dialog
+type SlackDialog struct {
 	CallbackID  string                       `json:"callback_id"`
 	Title       string                       `json:"title"`
 	SubmitLabel string                       `json:"submit_label"`
@@ -120,8 +127,7 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 	client := &http.Client{}
 
 	request, err := http.NewRequest(method, url, buffer)
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
-	// request.Header.Set("content-type", "application/json")
+	request.Header.Set("content-type", "application/json")
 	request.Header.Set("Accept", "application/json")
 
 	fmt.Printf("REQUEST TO SLACK --- %v \n", request)
