@@ -112,7 +112,7 @@ func OpenDialogInSlack(dialog *SlackDialogResponse) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Buffer for Response", responseBody)
+	fmt.Println("Buffer for Response", string(responseBody))
 
 	buffer.WriteString(string(responseBody))
 
