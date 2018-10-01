@@ -133,7 +133,9 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 	client := &http.Client{}
 
 	request, err := http.NewRequest(method, url, buffer)
-	request.Header.Set("content-type", "application/json")
+	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	// request.Header.Set("content-type", "application/json")
+
 	request.Header.Set("Accept", "application/json")
 
 	fmt.Printf("REQUEST TO SLACK --- %v \n", request)
