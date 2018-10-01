@@ -26,7 +26,7 @@ func SlackActionsCreate(c buffalo.Context) error {
 		fmt.Println("responseURL:  ", encodedCallback.ResponseURL)
 		lib.OpenDialogInSlack(
 			&lib.SlackDialogResponse{
-				Token:     encodedCallback.Token,
+				Token:     SlackAccessToken, //encodedCallback.Token,
 				TriggerID: encodedCallback.TriggerID,
 				Dialog: lib.SlackDialog{
 					CallbackID:  encodedCallback.CallbackID,

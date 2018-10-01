@@ -16,6 +16,9 @@ import (
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
 
+// SlackAccessToken - access token for slack app
+var SlackAccessToken = envy.Get("SLACK_ACCESS_TOKEN", "")
+
 // YouTrackAPI - obejct for YouTrack API
 var YouTrackAPI = &lib.YouTrackAPI{
 	Token:  envy.Get("YOUTRACK_TOKEN", ""),
