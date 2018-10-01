@@ -59,10 +59,27 @@ type SlackActionCallback struct {
 	ResponseURL string `json:"response_url"`
 }
 
+// SlackDialogResponse - response for dialog creating
+type SlackDialogResponse struct {
+	CallbackID  string                       `json:"callback_id"`
+	Title       string                       `json:"title"`
+	SubmitLabel string                       `json:"submit_label"`
+	State       string                       `json:"state"`
+	Elements    []SlackDialogResponseElement `json:"elements"`
+}
+
+// SlackDialogResponseElement - element for dialog form
+type SlackDialogResponseElement struct {
+	Type  string `json:"type"`
+	Label string `json:"label"`
+	Name  string `json:"name"`
+}
+
+// SlackDialogURL - url for dialogs in slack
+const SlackDialogURL = "https://slack.com/api/dialog.open"
+
 // SendAnswerToSlack - send answer to slack chat
 func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
-	client := &http.Client{}
-
 	buffer := new(bytes.Buffer)
 	responseBody, err := json.Marshal(slackResponse)
 	if err != nil {
@@ -70,13 +87,7 @@ func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
 	}
 	buffer.WriteString(string(responseBody))
 
-	request, err := http.NewRequest("POST", url, buffer)
-	request.Header.Set("content-type", "application/json")
-	request.Header.Set("Accept", "application/json")
-
-	fmt.Printf("REQUEST TO SLACK --- %v \n", request)
-
-	response, err := client.Do(request)
+	response, err := sendRequestToSlack("POST", url, buffer)
 	if err != nil {
 		return err
 	}
@@ -84,4 +95,41 @@ func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
 	fmt.Println("RESPPPPP", response)
 
 	return nil
+}
+
+// OpenDialogInSlack - Open dialog window in slack
+func OpenDialogInSlack(dialog *SlackDialogResponse) error {
+	buffer := new(bytes.Buffer)
+	responseBody, err := json.Marshal(dialog)
+	if err != nil {
+		return err
+	}
+	buffer.WriteString(string(responseBody))
+
+	response, err := sendRequestToSlack("POST", SlackDialogURL, buffer)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Dialog RESPPPPP", response)
+
+	return nil
+}
+
+func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Response, error) {
+	client := &http.Client{}
+
+	request, err := http.NewRequest(method, url, buffer)
+	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	// request.Header.Set("content-type", "application/json")
+	request.Header.Set("Accept", "application/json")
+
+	fmt.Printf("REQUEST TO SLACK --- %v \n", request)
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
