@@ -3,6 +3,8 @@ package actions
 import (
 	"fmt"
 
+	"encoding/json"
+
 	"github.com/gebv/sayto/lib"
 	"github.com/gobuffalo/buffalo"
 )
@@ -12,10 +14,18 @@ func SlackActionsCreate(c buffalo.Context) error {
 	fmt.Printf("Form: %v \n", c.Request().Form)
 
 	go func() {
-		responseURL := c.Request().Form.Get("payload")
-		fmt.Println("responseURL:  ", responseURL)
+		payload := c.Request().Form.Get("payload")
+		var encodedCallback lib.SlackActionCallback
 
-		lib.SendAnswerToSlack(responseURL, &lib.SlackResponse{
+		err := json.Unmarshal([]byte(payload), &encodedCallback)
+		if err != nil {
+			fmt.Printf("ERROR: Can't encode slack message: %v \n", err)
+			return
+		}
+
+		fmt.Println("responseURL:  ", encodedCallback.ResponseURL)
+
+		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 			Text: "Task was created",
 			Attachments: []lib.SlackAttachment{
 				{
