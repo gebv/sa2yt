@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -120,9 +121,7 @@ func OpenDialogInSlack(dialog *SlackDialogResponse) error {
 
 	fmt.Println("Dialog RESPPPPP", response)
 
-	var respBody []byte
-	response.Body.Read(respBody)
-
+	respBody, _ := ioutil.ReadAll(response.Body)
 	fmt.Println("PARSED RESPPPPP", string(respBody))
 
 	return nil
