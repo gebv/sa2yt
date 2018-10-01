@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gobuffalo/envy"
 )
 
 // SlackResponse - struct for response to Slack API
@@ -86,6 +88,9 @@ type SlackDialogResponseElement struct {
 // SlackDialogURL - url for dialogs in slack
 const SlackDialogURL = "https://slack.com/api/dialog.open"
 
+// SlackAccessToken - access token for slack app
+var SlackAccessToken = envy.Get("SLACK_ACCESS_TOKEN", "")
+
 // SendAnswerToSlack - send answer to slack chat
 func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
 	buffer := new(bytes.Buffer)
@@ -133,9 +138,8 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 	client := &http.Client{}
 
 	request, err := http.NewRequest(method, url, buffer)
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
-	// request.Header.Set("content-type", "application/json")
-
+	request.Header.Set("content-type", "application/json")
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", SlackAccessToken))
 	request.Header.Set("Accept", "application/json")
 
 	fmt.Printf("REQUEST TO SLACK --- %v \n", request)
