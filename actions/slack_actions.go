@@ -12,7 +12,7 @@ func SlackActionsCreate(c buffalo.Context) error {
 	fmt.Printf("Form: %v \n", c.Request().Form)
 
 	go func() {
-		responseURL := c.Request().Form.Get("response_url")
+		responseURL := c.Request().Form.Get("payload[response_url]")
 		fmt.Println("responseURL:  ", responseURL)
 
 		lib.SendAnswerToSlack(responseURL, &lib.SlackResponse{
