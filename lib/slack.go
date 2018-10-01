@@ -112,6 +112,8 @@ func OpenDialogInSlack(dialog *SlackDialogResponse) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("Buffer for Response", responseBody)
+
 	buffer.WriteString(string(responseBody))
 
 	response, err := sendRequestToSlack("POST", SlackDialogURL, buffer)
