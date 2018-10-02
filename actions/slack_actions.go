@@ -23,65 +23,101 @@ func SlackActionsCreate(c buffalo.Context) error {
 			return
 		}
 
-		fmt.Println("responseURL:  ", encodedCallback.ResponseURL)
-
-		var projectOptions []lib.SlackDialogElementOption
-		for _, project := range YouTrackAPI.CachedProjects {
-			projectOptions = append(projectOptions, lib.SlackDialogElementOption{
-				Label: project.ID,
-				Value: project.ID,
-			})
+		switch encodedCallback.CallbackID {
+		case "new_task":
+			sendDialogWindow(&encodedCallback)
+		case "create_task":
+			createIssueAndSendAnswer(&encodedCallback)
 		}
-
-		lib.OpenDialogInSlack(
-			&lib.SlackDialogResponse{
-				TriggerID: encodedCallback.TriggerID,
-				Dialog: lib.SlackDialog{
-					CallbackID:  encodedCallback.CallbackID,
-					State:       "Limo",
-					Title:       "Create new Task",
-					SubmitLabel: "Request",
-					Elements: []lib.SlackDialogResponseElement{
-						{
-							Type:    "select",
-							Label:   "Project ID",
-							Name:    "projectID",
-							Options: projectOptions,
-						},
-						{
-							Type:        "text",
-							Label:       "Summary",
-							Name:        "summary",
-							Placeholder: "Task Summary",
-						},
-						{
-							Type:  "textarea",
-							Label: "Description",
-							Name:  "description",
-							Hint:  "Explaint your task",
-						},
-					},
-				},
-			},
-		)
-
-		// Simple Answer
-		// lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
-		// 	Text: "Task was created",
-		// 	Attachments: []lib.SlackAttachment{
-		// 		{
-		// 			Fallback: fmt.Sprintf("View Task In YouTrack %s.", "urlToTask"),
-		// 			Actions: []lib.SlackAction{
-		// 				{
-		// 					Type: "button",
-		// 					Text: "View Task In YouTrack",
-		// 					URL:  "urlToTask",
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// })
 	}()
 
 	return c.Render(200, r.Plain(""))
 }
+
+func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
+	var projectOptions []lib.SlackDialogElementOption
+	for _, project := range YouTrackAPI.CachedProjects {
+		projectOptions = append(projectOptions, lib.SlackDialogElementOption{
+			Label: project.ID,
+			Value: project.ID,
+		})
+	}
+
+	lib.OpenDialogInSlack(
+		&lib.SlackDialogResponse{
+			TriggerID: encodedCallback.TriggerID,
+			Dialog: lib.SlackDialog{
+				CallbackID:  "create_task",
+				State:       "Limo",
+				Title:       "Create new Task",
+				SubmitLabel: "Request",
+				Elements: []lib.SlackDialogResponseElement{
+					{
+						Type:    "select",
+						Label:   "Project ID",
+						Name:    "projectID",
+						Options: projectOptions,
+					},
+					{
+						Type:        "text",
+						Label:       "Summary",
+						Name:        "summary",
+						Placeholder: "Task Summary",
+					},
+					{
+						Type:  "textarea",
+						Label: "Description",
+						Name:  "description",
+						Hint:  "Explaint your task",
+					},
+				},
+			},
+		},
+	)
+}
+
+func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
+	urlToTask, err := YouTrackAPI.CreateIssue(
+		encodedCallback.Submission.ProjectID,
+		encodedCallback.Submission.Summary,
+		encodedCallback.Submission.Description)
+	if err != nil {
+		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
+			ResponseType: "ephemeral",
+			Text:         fmt.Sprintf("Error create issue in YouTrack: %v", err),
+		})
+	}
+
+	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
+		Text: "Task was created",
+		Attachments: []lib.SlackAttachment{
+			{
+				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
+				Actions: []lib.SlackAction{
+					{
+						Type: "button",
+						Text: "View Task In YouTrack",
+						URL:  urlToTask,
+					},
+				},
+			},
+		},
+	})
+}
+
+// Simple Answer
+// lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
+// 	Text: "Task was created",
+// 	Attachments: []lib.SlackAttachment{
+// 		{
+// 			Fallback: fmt.Sprintf("View Task In YouTrack %s.", "urlToTask"),
+// 			Actions: []lib.SlackAction{
+// 				{
+// 					Type: "button",
+// 					Text: "View Task In YouTrack",
+// 					URL:  "urlToTask",
+// 				},
+// 			},
+// 		},
+// 	},
+// })

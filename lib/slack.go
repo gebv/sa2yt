@@ -60,6 +60,11 @@ type SlackActionCallback struct {
 		Ts          string `json:"ts"`
 	} `json:"message"`
 	ResponseURL string `json:"response_url"`
+	Submission  struct {
+		ProjectID   string `json:"projectID"`
+		Summary     string `json:"summary"`
+		Description string `json:"description"`
+	} `json:"submission"`
 }
 
 // SlackDialogResponse - response for dialog end-point
