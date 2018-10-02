@@ -52,7 +52,7 @@ func (api *YouTrackAPI) GetAllProjects() ([]string, error) {
 	fmt.Println("Get projects resp: ", response)
 	respBody, _ := ioutil.ReadAll(response.Body)
 
-	fmt.Println("Projects body ", respBody)
+	fmt.Println("Projects body ", string(respBody))
 	return []string{}, nil
 }
 
