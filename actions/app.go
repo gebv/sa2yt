@@ -58,6 +58,8 @@ func App() *buffalo.App {
 		app.POST("/slack_actions", SlackActionsCreate)
 	}
 
+	YouTrackAPI.GetAllProjects()
+
 	return app
 }
 

@@ -64,7 +64,6 @@ type SlackActionCallback struct {
 
 // SlackDialogResponse - response for dialog end-point
 type SlackDialogResponse struct {
-	Token     string      `json:"token"`
 	TriggerID string      `json:"trigger_id"`
 	Dialog    SlackDialog `json:"dialog"`
 }

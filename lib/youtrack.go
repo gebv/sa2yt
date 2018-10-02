@@ -3,6 +3,7 @@ package lib
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -34,6 +35,25 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 	restURL := response.Header.Get("Location")
 	return strings.Replace(restURL, "/rest", "", 1), nil
+}
+
+// GetAllProjects - get all projects from YouTrack
+func (api *YouTrackAPI) GetAllProjects() ([]string, error) {
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/project"}, map[string]string{})
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	if response.StatusCode != 200 {
+		return []string{}, fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+	}
+
+	fmt.Println("Get projects resp: ", response)
+	respBody, _ := ioutil.ReadAll(response.Body)
+
+	fmt.Println("Projects body ", respBody)
+	return []string{}, nil
 }
 
 func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[string]string) (*http.Response, error) {
