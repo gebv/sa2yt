@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"fmt"
+
 	"github.com/gebv/sayto/lib"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/middleware"
@@ -58,7 +60,10 @@ func App() *buffalo.App {
 		app.POST("/slack_actions", SlackActionsCreate)
 	}
 
-	YouTrackAPI.GetAllProjects()
+	err := YouTrackAPI.RefreshProjectsCache()
+	if err != nil {
+		fmt.Println("Error get projects list from YouTrack: ", err)
+	}
 
 	return app
 }

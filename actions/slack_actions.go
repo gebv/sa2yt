@@ -24,25 +24,41 @@ func SlackActionsCreate(c buffalo.Context) error {
 		}
 
 		fmt.Println("responseURL:  ", encodedCallback.ResponseURL)
+
+		var projectOptions []lib.SlackDialogElementOption
+		for _, project := range YouTrackAPI.CachedProjects {
+			projectOptions = append(projectOptions, lib.SlackDialogElementOption{
+				Label: project.ID,
+				Value: project.ID,
+			})
+		}
+
 		lib.OpenDialogInSlack(
 			&lib.SlackDialogResponse{
 				TriggerID: encodedCallback.TriggerID,
 				Dialog: lib.SlackDialog{
 					CallbackID:  encodedCallback.CallbackID,
 					State:       "Limo",
-					Title:       "Request a Ride",
+					Title:       "Create new Task",
 					SubmitLabel: "Request",
-					//TODO: change dialog buttons https://api.slack.com/methods/dialog.open
 					Elements: []lib.SlackDialogResponseElement{
 						{
-							Type:  "text",
-							Label: "Pickup Location",
-							Name:  "loc_origin",
+							Type:    "select",
+							Label:   "Project ID",
+							Name:    "projectID",
+							Options: projectOptions,
 						},
 						{
-							Type:  "text",
-							Label: "Dropoff Location",
-							Name:  "loc_destination",
+							Type:        "text",
+							Label:       "Summary",
+							Name:        "summary",
+							Placeholder: "Task Summary",
+						},
+						{
+							Type:  "textarea",
+							Label: "Description",
+							Name:  "description",
+							Hint:  "Explaint your task",
 						},
 					},
 				},

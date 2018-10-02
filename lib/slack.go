@@ -79,9 +79,18 @@ type SlackDialog struct {
 
 // SlackDialogResponseElement - element for dialog form
 type SlackDialogResponseElement struct {
-	Type  string `json:"type"`
+	Type        string                     `json:"type"`
+	Label       string                     `json:"label"`
+	Name        string                     `json:"name"`
+	Placeholder string                     `json:"placeholder"`
+	Hint        string                     `json:"hint"`
+	Options     []SlackDialogElementOption `json:"options"`
+}
+
+// SlackDialogElementOption - options for "select" input
+type SlackDialogElementOption struct {
 	Label string `json:"label"`
-	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 // SlackDialogURL - url for dialogs in slack

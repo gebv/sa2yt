@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,8 +12,15 @@ import (
 
 // YouTrackAPI - struct for youtrack api
 type YouTrackAPI struct {
-	Token  string
-	Domain string
+	Token          string
+	Domain         string
+	CachedProjects []YouTrackProject
+}
+
+// YouTrackProject - projects on YouTrack
+type YouTrackProject struct {
+	ID  string `json:"id"`
+	URL string `json:"url"`
 }
 
 // CreateIssue - create New Issue in YouTrack
@@ -37,23 +45,42 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 	return strings.Replace(restURL, "/rest", "", 1), nil
 }
 
-// GetAllProjects - get all projects from YouTrack
-func (api *YouTrackAPI) GetAllProjects() ([]string, error) {
-	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/project"}, map[string]string{})
-
+// RefreshProjectsCache - get available projects from YouTrack
+func (api *YouTrackAPI) RefreshProjectsCache() error {
+	projects := []YouTrackProject{}
+	response, err := api.getAllProjects()
 	if err != nil {
-		return []string{}, err
-	}
-
-	if response.StatusCode != 200 {
-		return []string{}, fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+		return err
 	}
 
 	fmt.Println("Get projects resp: ", response)
-	respBody, _ := ioutil.ReadAll(response.Body)
+	respBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
 
-	fmt.Println("Projects body ", string(respBody))
-	return []string{}, nil
+	err = json.Unmarshal(respBody, &projects)
+	if err != nil {
+		return err
+	}
+
+	api.CachedProjects = projects
+
+	return nil
+}
+
+func (api *YouTrackAPI) getAllProjects() (*http.Response, error) {
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/admin/project"}, map[string]string{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		return nil, fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+	}
+
+	return response, nil
 }
 
 func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[string]string) (*http.Response, error) {
