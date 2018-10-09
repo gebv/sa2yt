@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gobuffalo/envy"
 )
@@ -36,6 +37,7 @@ type SlackAction struct {
 type SlackActionCallback struct {
 	Type     string `json:"type"`
 	Token    string `json:"token"`
+	State    string `json:"state"`
 	ActionTs string `json:"action_ts"`
 	Team     struct {
 		ID     string `json:"id"`
@@ -104,6 +106,9 @@ const SlackDialogURL = "https://slack.com/api/dialog.open"
 // SlackAccessToken - access token for slack app
 var SlackAccessToken = envy.Get("SLACK_ACCESS_TOKEN", "")
 
+// SlackDomain - slack domain
+var SlackDomain = envy.Get("SLACK_DOMAIN", "")
+
 // SendAnswerToSlack - send answer to slack chat
 func SendAnswerToSlack(url string, slackResponse *SlackResponse) error {
 	buffer := new(bytes.Buffer)
@@ -163,4 +168,14 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 	}
 
 	return response, nil
+}
+
+// MessageLink - link on message to Slack
+func (callback *SlackActionCallback) MessageLink() string {
+	return fmt.Sprintf(
+		"https://%s/archives/%s/p%s",
+		SlackDomain,
+		callback.Channel.ID,
+		strings.Replace(callback.Message.Ts, ".", "", 1),
+	)
 }

@@ -43,12 +43,14 @@ func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
 		})
 	}
 
+	originalMessage := fmt.Sprintf("[%s](дата сообщения из слак)", encodedCallback.Message.Ts)
+
 	lib.OpenDialogInSlack(
 		&lib.SlackDialogResponse{
 			TriggerID: encodedCallback.TriggerID,
 			Dialog: lib.SlackDialog{
 				CallbackID:  "create_task",
-				State:       "Limo",
+				State:       originalMessage,
 				Title:       "Create new Task",
 				SubmitLabel: "Request",
 				Elements: []lib.SlackDialogResponseElement{
@@ -80,7 +82,7 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	urlToTask, err := YouTrackAPI.CreateIssue(
 		encodedCallback.Submission.ProjectID,
 		encodedCallback.Submission.Summary,
-		encodedCallback.Submission.Description)
+		encodedCallback.Submission.Description+"\n"+encodedCallback.State)
 	if err != nil {
 		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 			ResponseType: "ephemeral",
