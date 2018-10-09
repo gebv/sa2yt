@@ -43,14 +43,12 @@ func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
 		})
 	}
 
-	originalMessage := fmt.Sprintf("[%s](дата сообщения из слак)", encodedCallback.Message.Ts)
-
 	lib.OpenDialogInSlack(
 		&lib.SlackDialogResponse{
 			TriggerID: encodedCallback.TriggerID,
 			Dialog: lib.SlackDialog{
 				CallbackID:  "create_task",
-				State:       originalMessage,
+				State:       encodedCallback.MessageLink(),
 				Title:       "Create new Task",
 				SubmitLabel: "Request",
 				Elements: []lib.SlackDialogResponseElement{
