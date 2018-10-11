@@ -172,9 +172,9 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 
 // MessageLink - link on message to Slack
 func (callback *SlackActionCallback) MessageLink() string {
-	text := `---
-> %s
-https://%s/archives/%s/p%s`
+	text := "\n---\n" +
+		"> %s \n" +
+		"https://%s/archives/%s/p%s\n"
 
 	return fmt.Sprintf(
 		text,
