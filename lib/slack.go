@@ -100,6 +100,12 @@ type SlackDialogElementOption struct {
 	Value string `json:"value"`
 }
 
+// MessageLinkForState - message data for state attr
+type MessageLinkForState struct {
+	Link    string `json:"link"`
+	Message string `json:"message"`
+}
+
 // SlackDialogURL - url for dialogs in slack
 const SlackDialogURL = "https://slack.com/api/dialog.open"
 
@@ -172,15 +178,25 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 
 // MessageLink - link on message to Slack
 func (callback *SlackActionCallback) MessageLink() string {
-	text := "\n---\n" +
-		"> %s \n" +
-		"https://%s/archives/%s/p%s\n"
+	message := MessageLinkForState{
+		Message: callback.Message.Text,
+		Link: fmt.Sprintf("https://%s/archives/%s/p%s\n",
+			SlackDomain,
+			callback.Channel.ID,
+			strings.Replace(callback.Message.Ts, ".", "", 1),
+		),
+	}
 
-	return fmt.Sprintf(
-		text,
-		callback.Message.Text,
-		SlackDomain,
-		callback.Channel.ID,
-		strings.Replace(callback.Message.Ts, ".", "", 1),
-	)
+	encodedData, _ := json.Marshal(message)
+
+	return string(encodedData)
+}
+
+// ParseState - parse state when callback returs
+func (callback *SlackActionCallback) ParseState() MessageLinkForState {
+	message := MessageLinkForState{}
+
+	json.Unmarshal([]byte(callback.State), &message)
+
+	return message
 }

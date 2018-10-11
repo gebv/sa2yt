@@ -77,10 +77,11 @@ func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
 }
 
 func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
+	parsedState := encodedCallback.ParseState()
 	urlToTask, err := YouTrackAPI.CreateIssue(
 		encodedCallback.Submission.ProjectID,
 		encodedCallback.Submission.Summary,
-		encodedCallback.Submission.Description+"\n"+encodedCallback.State)
+		encodedCallback.Submission.Description+"\n---\n > "+parsedState.Message+"\n"+parsedState.Link)
 	if err != nil {
 		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 			ResponseType: "ephemeral",
