@@ -1,12 +1,16 @@
 package actions
 
 import (
+	"fmt"
+
 	"github.com/gebv/sayto/lib"
 	"github.com/gobuffalo/buffalo"
 )
 
 // SlackOptionsIndex default implementation.
 func SlackOptionsIndex(c buffalo.Context) error {
+	fmt.Printf("Form Options: %v \n", c.Request().Form)
+
 	options := []lib.SlackDialogElementOption{
 		{Label: "Label 1", Value: "Value 1"},
 		{Label: "Label 2", Value: "Value 2"},
