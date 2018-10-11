@@ -25,16 +25,18 @@ func SlackActionsCreate(c buffalo.Context) error {
 
 		switch encodedCallback.CallbackID {
 		case "new_task":
-			sendDialogWindow(&encodedCallback)
+			sendNewTaskWindow(&encodedCallback)
 		case "create_task":
 			createIssueAndSendAnswer(&encodedCallback)
+		case "new_comment":
+			sendNewCommentWindow(&encodedCallback)
 		}
 	}()
 
 	return c.Render(200, r.Plain(""))
 }
 
-func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
+func sendNewTaskWindow(encodedCallback *lib.SlackActionCallback) {
 	var projectOptions []lib.SlackDialogElementOption
 	for _, project := range YouTrackAPI.CachedProjects {
 		projectOptions = append(projectOptions, lib.SlackDialogElementOption{
@@ -76,6 +78,29 @@ func sendDialogWindow(encodedCallback *lib.SlackActionCallback) {
 	)
 }
 
+func sendNewCommentWindow(encodedCallback *lib.SlackActionCallback) {
+	lib.OpenDialogInSlack(
+		&lib.SlackDialogResponse{
+			TriggerID: encodedCallback.TriggerID,
+			Dialog: lib.SlackDialog{
+				CallbackID:  "create_comment",
+				State:       encodedCallback.MessageLink(),
+				Title:       "Add new comment to Task",
+				SubmitLabel: "Create",
+				Elements: []lib.SlackDialogResponseElement{
+					{
+						Type:           "select",
+						Label:          "Task ID",
+						Name:           "taskID",
+						DataSource:     "external",
+						MinQueryLength: 2,
+					},
+				},
+			},
+		},
+	)
+}
+
 func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	parsedState := encodedCallback.ParseState()
 	urlToTask, err := YouTrackAPI.CreateIssue(
@@ -105,20 +130,3 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		},
 	})
 }
-
-// Simple Answer
-// lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
-// 	Text: "Task was created",
-// 	Attachments: []lib.SlackAttachment{
-// 		{
-// 			Fallback: fmt.Sprintf("View Task In YouTrack %s.", "urlToTask"),
-// 			Actions: []lib.SlackAction{
-// 				{
-// 					Type: "button",
-// 					Text: "View Task In YouTrack",
-// 					URL:  "urlToTask",
-// 				},
-// 			},
-// 		},
-// 	},
-// })

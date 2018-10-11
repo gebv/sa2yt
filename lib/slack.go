@@ -86,12 +86,14 @@ type SlackDialog struct {
 
 // SlackDialogResponseElement - element for dialog form
 type SlackDialogResponseElement struct {
-	Type        string                     `json:"type"`
-	Label       string                     `json:"label"`
-	Name        string                     `json:"name"`
-	Placeholder string                     `json:"placeholder"`
-	Hint        string                     `json:"hint"`
-	Options     []SlackDialogElementOption `json:"options"`
+	Type           string                     `json:"type"`
+	Label          string                     `json:"label"`
+	Name           string                     `json:"name"`
+	Placeholder    string                     `json:"placeholder"`
+	Hint           string                     `json:"hint"`
+	DataSource     string                     `json:"data_source"`
+	MinQueryLength int                        `json:"min_query_length"`
+	Options        []SlackDialogElementOption `json:"options"`
 }
 
 // SlackDialogElementOption - options for "select" input
@@ -100,8 +102,8 @@ type SlackDialogElementOption struct {
 	Value string `json:"value"`
 }
 
-// MessageLinkForState - message data for state attr
-type MessageLinkForState struct {
+// StateData - message data for state attr
+type StateData struct {
 	Link    string `json:"link"`
 	Message string `json:"message"`
 }
@@ -178,7 +180,7 @@ func sendRequestToSlack(method, url string, buffer *bytes.Buffer) (*http.Respons
 
 // MessageLink - link on message to Slack
 func (callback *SlackActionCallback) MessageLink() string {
-	message := MessageLinkForState{
+	message := StateData{
 		Message: callback.Message.Text,
 		Link: fmt.Sprintf("https://%s/archives/%s/p%s\n",
 			SlackDomain,
@@ -193,8 +195,8 @@ func (callback *SlackActionCallback) MessageLink() string {
 }
 
 // ParseState - parse state when callback returs
-func (callback *SlackActionCallback) ParseState() MessageLinkForState {
-	message := MessageLinkForState{}
+func (callback *SlackActionCallback) ParseState() StateData {
+	message := StateData{}
 
 	json.Unmarshal([]byte(callback.State), &message)
 
