@@ -28,7 +28,13 @@ func SlackOptionsIndex(c buffalo.Context) error {
 	if err != nil {
 		fmt.Printf("ERROR: Can't encode slack message: %v \n", err)
 		return nil
+	}
 
+	fmt.Println("Query string", encodedCallback.Value)
+	_, err = YouTrackAPI.SearchIssues(encodedCallback.Value)
+	if err != nil {
+		fmt.Println("Search Error ", err)
+		return nil
 	}
 
 	options := selectOptions{
@@ -39,14 +45,6 @@ func SlackOptionsIndex(c buffalo.Context) error {
 			{Text: "Label 4", Value: "Value 4"},
 		},
 	}
-
-	fmt.Println("Query string", encodedCallback.Value)
-	_, err = YouTrackAPI.SearchIssues(encodedCallback.Value)
-	if err != nil {
-		fmt.Println("Search Error ", err)
-		return nil
-	}
-	// TODO: add search task by https://www.jetbrains.com/help/youtrack/standalone/Intellisense-for-issue-search.html
 
 	return c.Render(200, r.JSON(options))
 }

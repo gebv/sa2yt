@@ -47,7 +47,7 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 // SearchIssues - search Issues in YouTrack
 func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
-	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue/intellisense"}, map[string]string{
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
 		"filter": query,
 	})
 
