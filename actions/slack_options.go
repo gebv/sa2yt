@@ -17,6 +17,7 @@ func SlackOptionsIndex(c buffalo.Context) error {
 		{Label: "Label 3", Value: "Value 3"},
 		{Label: "Label 4", Value: "Value 4"},
 	}
+	// TODO: add search task by https://www.jetbrains.com/help/youtrack/standalone/Intellisense-for-issue-search.html
 
 	return c.Render(200, r.JSON(options))
 }
