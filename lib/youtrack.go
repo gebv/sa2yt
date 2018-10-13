@@ -60,7 +60,7 @@ func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("Search Issue resp: ", respBody)
+	fmt.Println("Search Issue resp: ", string(respBody))
 
 	return "", nil
 }
