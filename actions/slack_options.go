@@ -11,7 +11,7 @@ type selectOptions struct {
 }
 
 type selectOption struct {
-	Text  string `json:"text"`
+	Text  string `json:"label"`
 	Value string `json:"value"`
 }
 
