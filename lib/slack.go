@@ -39,6 +39,8 @@ type SlackActionCallback struct {
 	Token    string `json:"token"`
 	State    string `json:"state"`
 	ActionTs string `json:"action_ts"`
+	Name     string `json:"name"`
+	Value    string `json:"value"`
 	Team     struct {
 		ID     string `json:"id"`
 		Domain string `json:"domain"`

@@ -45,6 +45,25 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 	return strings.Replace(restURL, "/rest", "", 1), nil
 }
 
+// SearchIssues - search Issues in YouTrack
+func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue/intellisense"}, map[string]string{
+		"filter": query,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if response.StatusCode != 201 {
+		return "", fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+	}
+
+	fmt.Println("Search Issue resp: ", response)
+
+	return "", nil
+}
+
 // RefreshProjectsCache - get available projects from YouTrack
 func (api *YouTrackAPI) RefreshProjectsCache() error {
 	projects := []YouTrackProject{}
