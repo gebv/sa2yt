@@ -3,16 +3,12 @@ package actions
 import (
 	"fmt"
 
+	"github.com/gebv/sayto/lib"
 	"github.com/gobuffalo/buffalo"
 )
 
 type selectOptions struct {
-	Options []selectOption `json:"options"`
-}
-
-type selectOption struct {
-	Text  string `json:"label"`
-	Value string `json:"value"`
+	Options []lib.SlackDialogElementOption `json:"options"`
 }
 
 // SlackOptionsIndex default implementation.
@@ -36,11 +32,11 @@ func SlackOptionsIndex(c buffalo.Context) error {
 	// }
 
 	options := selectOptions{
-		Options: []selectOption{
-			{Text: "Label 1", Value: "Value 1"},
-			{Text: "Label 2", Value: "Value 2"},
-			{Text: "Label 3", Value: "Value 3"},
-			{Text: "Label 4", Value: "Value 4"},
+		Options: []lib.SlackDialogElementOption{
+			{Label: "Label 1", Value: "Value 1"},
+			{Label: "Label 2", Value: "Value 2"},
+			{Label: "Label 3", Value: "Value 3"},
+			{Label: "Label 4", Value: "Value 4"},
 		},
 	}
 
