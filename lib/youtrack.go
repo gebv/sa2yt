@@ -23,6 +23,24 @@ type YouTrackProject struct {
 	URL string `json:"url"`
 }
 
+// YouTrackIssue - issue from YouTrack
+type YouTrackIssue struct {
+	ID       string      `json:"id"`
+	EntityID string      `json:"entityId"`
+	JiraID   interface{} `json:"jiraId"`
+	Field    []struct {
+		Name    string   `json:"name"`
+		Value   string   `json:"value"`
+		ValueID []string `json:"valueId,omitempty"`
+		Color   struct {
+			Bg string `json:"bg"`
+			Fg string `json:"fg"`
+		} `json:"color,omitempty"`
+	} `json:"field"`
+	Comment []interface{} `json:"comment"`
+	Tag     []interface{} `json:"tag"`
+}
+
 // CreateIssue - create New Issue in YouTrack
 func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (string, error) {
 	response, err := api.sendRequest("PUT", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
@@ -59,7 +77,12 @@ func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
+	var searchResp []YouTrackIssue
+	err = json.Unmarshal(respBody, &searchResp)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("Search parsed Resp: %v\n", searchResp)
 	fmt.Println("Search Issue resp: ", string(respBody))
 
 	return "", nil
