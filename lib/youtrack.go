@@ -55,11 +55,12 @@ func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
 		return "", err
 	}
 
-	if response.StatusCode != 201 {
-		return "", fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+	respBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
 	}
 
-	fmt.Println("Search Issue resp: ", response)
+	fmt.Println("Search Issue resp: ", respBody)
 
 	return "", nil
 }
