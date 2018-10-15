@@ -164,7 +164,8 @@ func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[str
 	}
 
 	request, err := http.NewRequest(method, baseURL.ResolveReference(path).String(), prepareParams(params))
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	// application/x-www-form-urlencoded
+	request.Header.Set("content-type", "application/json")
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Cache-Control", "no-cache")
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.Token))
