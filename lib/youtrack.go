@@ -101,9 +101,7 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 // CreateComment - add comment to specified Issue
 func (api *YouTrackAPI) CreateComment(issueID, comment string) error {
 	path := fmt.Sprintf("youtrack/api/issues/%s/comments", issueID)
-	response, err := api.sendRequest("POST", &url.URL{Path: path}, map[string]string{
-		"text": comment,
-	})
+	response, err := api.sendJSONRequest("POST", &url.URL{Path: path}, []byte(fmt.Sprintf(`{"text": "%s"}`, comment)))
 
 	if err != nil {
 		return err
@@ -164,14 +162,11 @@ func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[str
 	}
 
 	request, err := http.NewRequest(method, baseURL.ResolveReference(path).String(), prepareParams(params))
-	// application/x-www-form-urlencoded
-	request.Header.Set("content-type", "application/json")
+	request.Header.Set("content-type", "application/x-www-form-urlencoded")
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Cache-Control", "no-cache")
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.Token))
 
-	fmt.Println("URL --- ", baseURL.ResolveReference(path).String())
-	fmt.Println("TOKEN --- ", fmt.Sprintf("Bearer %s", api.Token))
 	fmt.Printf("REQUEST --- %v \n", request)
 
 	response, err := client.Do(request)
@@ -180,6 +175,32 @@ func (api *YouTrackAPI) sendRequest(method string, path *url.URL, params map[str
 	}
 
 	fmt.Println("RESPPPPP", response)
+
+	return response, nil
+}
+
+// TODO: extract common parties
+func (api *YouTrackAPI) sendJSONRequest(method string, path *url.URL, JSONstr []byte) (*http.Response, error) {
+	client := &http.Client{}
+	baseURL, err := url.Parse(api.Domain)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest(method, baseURL.ResolveReference(path).String(), bytes.NewBuffer(JSONstr))
+	request.Header.Set("content-type", "application/json")
+	request.Header.Set("Accept", "application/json")
+	request.Header.Set("Cache-Control", "no-cache")
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", api.Token))
+
+	fmt.Printf("JSON REQUEST --- %v \n", request)
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("JSON RESPPPPP", response)
 
 	return response, nil
 }
