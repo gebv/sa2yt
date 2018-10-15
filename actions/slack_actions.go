@@ -30,6 +30,8 @@ func SlackActionsCreate(c buffalo.Context) error {
 			createIssueAndSendAnswer(&encodedCallback)
 		case "new_comment":
 			sendNewCommentWindow(&encodedCallback)
+		case "create_comment":
+			createNewCommentAndSendAnswer(&encodedCallback)
 		}
 	}()
 
@@ -129,4 +131,8 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 			},
 		},
 	})
+}
+
+func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
+	fmt.Println("createNewCommentAndSendAnswer --- ")
 }
