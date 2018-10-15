@@ -114,6 +114,7 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 			ResponseType: "ephemeral",
 			Text:         fmt.Sprintf("Error create issue in YouTrack: %v", err),
 		})
+		return
 	}
 
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
@@ -144,6 +145,7 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 			ResponseType: "ephemeral",
 			Text:         fmt.Sprintf("Error create comment in YouTrack: %v", err),
 		})
+		return
 	}
 
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
