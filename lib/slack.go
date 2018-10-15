@@ -66,6 +66,7 @@ type SlackActionCallback struct {
 	ResponseURL string `json:"response_url"`
 	Submission  struct {
 		ProjectID   string `json:"projectID"`
+		TaskID      string `json:"taskID"`
 		Summary     string `json:"summary"`
 		Description string `json:"description"`
 	} `json:"submission"`

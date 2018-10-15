@@ -135,4 +135,18 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 
 func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	fmt.Println("createNewCommentAndSendAnswer --- ")
+	parsedState := encodedCallback.ParseState()
+	err := YouTrackAPI.CreateComment(encodedCallback.Submission.TaskID,
+		"\n---\n > "+parsedState.Message+"\n"+parsedState.Link)
+
+	if err != nil {
+		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
+			ResponseType: "ephemeral",
+			Text:         fmt.Sprintf("Error create comment in YouTrack: %v", err),
+		})
+	}
+
+	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
+		Text: "Comment was created",
+	})
 }

@@ -72,7 +72,7 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 // SearchIssues - search Issues in YouTrack
 func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
-	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue/intellisense"}, map[string]string{
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
 		"filter": query,
 	})
 
@@ -94,10 +94,28 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Search parsed Resp: %v\n", searchResp)
-	fmt.Println("Search Issue resp: ", string(respBody))
 
 	return searchResp.Issues, nil
+}
+
+// CreateComment - add comment to specified Issue
+func (api *YouTrackAPI) CreateComment(issueID, comment string) error {
+	path := fmt.Sprintf("youtrack/api/issues/%s/comments", issueID)
+	response, err := api.sendRequest("POST", &url.URL{Path: path}, map[string]string{
+		"text": comment,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != 200 {
+		return fmt.Errorf("Wrong response status from Youtrack is %d", response.StatusCode)
+	}
+
+	fmt.Println("Create Comment resp: ", response)
+
+	return nil
 }
 
 // RefreshProjectsCache - get available projects from YouTrack
