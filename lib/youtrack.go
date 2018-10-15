@@ -77,7 +77,12 @@ func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var searchResp interface{} //[]YouTrackIssue
+
+	type searchAnswer struct {
+		Issues []YouTrackIssue `json:"issue"`
+	}
+
+	var searchResp searchAnswer //[]YouTrackIssue
 	err = json.Unmarshal(respBody, &searchResp)
 	if err != nil {
 		return "", err
