@@ -26,20 +26,25 @@ func SlackOptionsIndex(c buffalo.Context) error {
 	}
 
 	fmt.Println("Query string", encodedCallback.Value)
-	_, err = YouTrackAPI.SearchIssues(encodedCallback.Value)
+	issues, err := YouTrackAPI.SearchIssues(encodedCallback.Value)
 	if err != nil {
 		fmt.Println("Search Error ", err)
 		return nil
 	}
 
-	options := selectOptions{
-		Options: []lib.SlackDialogElementOption{
-			{Label: "Label 1", Value: "Value 1"},
-			{Label: "Label 2", Value: "Value 2"},
-			{Label: "Label 3", Value: "Value 3"},
-			{Label: "Label 4", Value: "Value 4"},
-		},
+	options := selectOptions{}
+	for _, issue := range issues {
+		options.Options = append(options.Options, lib.SlackDialogElementOption{Label: issue.Summary(), Value: issue.ID})
 	}
+
+	// options := selectOptions{
+	// 	Options: []lib.SlackDialogElementOption{
+	// 		{Label: "Label 1", Value: "Value 1"},
+	// 		{Label: "Label 2", Value: "Value 2"},
+	// 		{Label: "Label 3", Value: "Value 3"},
+	// 		{Label: "Label 4", Value: "Value 4"},
+	// 	},
+	// }
 
 	return c.Render(200, r.JSON(options))
 }

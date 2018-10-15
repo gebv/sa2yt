@@ -29,16 +29,23 @@ type YouTrackIssue struct {
 	EntityID string      `json:"entityId"`
 	JiraID   interface{} `json:"jiraId"`
 	Field    []struct {
-		Name    string   `json:"name"`
-		Value   string   `json:"value"`
-		ValueID []string `json:"valueId,omitempty"`
-		Color   struct {
-			Bg string `json:"bg"`
-			Fg string `json:"fg"`
-		} `json:"color,omitempty"`
+		Name  string      `json:"name"`
+		Value interface{} `json:"value"`
 	} `json:"field"`
-	Comment []interface{} `json:"comment"`
-	Tag     []interface{} `json:"tag"`
+}
+
+// Summary - get summary field from issue
+func (issue *YouTrackIssue) Summary() string {
+	var summary string
+
+	for _, field := range issue.Field {
+		if field.Name == "summary" {
+			summary = field.Value.(string)
+			break
+		}
+	}
+
+	return summary
 }
 
 // CreateIssue - create New Issue in YouTrack
@@ -64,33 +71,33 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 }
 
 // SearchIssues - search Issues in YouTrack
-func (api *YouTrackAPI) SearchIssues(query string) (string, error) {
+func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
 		"filter": query,
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	respBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	type searchAnswer struct {
 		Issues []YouTrackIssue `json:"issue"`
 	}
+	var searchResp searchAnswer
 
-	var searchResp searchAnswer //[]YouTrackIssue
 	err = json.Unmarshal(respBody, &searchResp)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	fmt.Printf("Search parsed Resp: %v\n", searchResp)
 	fmt.Println("Search Issue resp: ", string(respBody))
 
-	return "", nil
+	return searchResp.Issues, nil
 }
 
 // RefreshProjectsCache - get available projects from YouTrack
