@@ -150,23 +150,21 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		return
 	}
 
-	// https://fader2.myjetbrains.com/youtrack/issue/TEST1-6
 	pathToTask, _ := url.Parse(path.Join("/youtrack/issue/", encodedCallback.Submission.TaskID))
 	domainURL, _ := url.Parse(YouTrackAPI.Domain)
 	urlToTask := domainURL.ResolveReference(pathToTask)
-	fmt.Println("urlToTask -- ", urlToTask)
 
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 		ResponseType: "ephemeral",
-		Text:         fmt.Sprintf("Comment was added %s", urlToTask),
+		Text:         "Comment was added",
 		Attachments: []lib.SlackAttachment{
 			{
-				Fallback: fmt.Sprintf("View Task With New Comment In YouTrack %s.", urlToTask),
+				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
 				Color:    "good",
 				Actions: []lib.SlackAction{
 					{
 						Type: "button",
-						Text: "View Task With New Comment In YouTrack",
+						Text: "View Task In YouTrack",
 						URL:  urlToTask.String(),
 					},
 				},
