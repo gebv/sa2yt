@@ -89,7 +89,7 @@ func sendNewCommentWindow(encodedCallback *lib.SlackActionCallback) {
 				CallbackID:  "create_comment",
 				State:       encodedCallback.MessageLink(),
 				Title:       "Add new comment to Task",
-				SubmitLabel: "Create",
+				SubmitLabel: "Add Comment",
 				Elements: []lib.SlackDialogResponseElement{
 					{
 						Type:           "select",
@@ -137,7 +137,6 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 }
 
 func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
-	fmt.Println("createNewCommentAndSendAnswer --- ")
 	parsedState := encodedCallback.ParseState()
 	err := YouTrackAPI.CreateComment(encodedCallback.Submission.TaskID,
 		parsedState.Message+"\n---\n"+parsedState.Link)
@@ -157,12 +156,12 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		Text:         fmt.Sprintf("Comment was added %s", urlToTask),
 		Attachments: []lib.SlackAttachment{
 			{
-				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
+				Fallback: fmt.Sprintf("View Task With New Comment In YouTrack %s.", urlToTask),
 				Color:    "good",
 				Actions: []lib.SlackAction{
 					{
 						Type: "button",
-						Text: "View Task In YouTrack",
+						Text: "View Task With New Comment In YouTrack",
 						URL:  urlToTask,
 					},
 				},
