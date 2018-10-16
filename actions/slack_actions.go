@@ -123,6 +123,7 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		Attachments: []lib.SlackAttachment{
 			{
 				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
+				Color:    "good",
 				Actions: []lib.SlackAction{
 					{
 						Type: "button",
@@ -157,6 +158,7 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		Attachments: []lib.SlackAttachment{
 			{
 				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
+				Color:    "good",
 				Actions: []lib.SlackAction{
 					{
 						Type: "button",

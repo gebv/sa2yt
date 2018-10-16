@@ -22,6 +22,7 @@ type SlackResponse struct {
 type SlackAttachment struct {
 	Text     string        `json:"text"`
 	Fallback string        `json:"fallback"`
+	Color    string        `json:"color"`
 	Actions  []SlackAction `json:"actions"`
 }
 
