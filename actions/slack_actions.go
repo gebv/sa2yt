@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"path"
 
 	"encoding/json"
 
@@ -138,7 +139,7 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	fmt.Println("createNewCommentAndSendAnswer --- ")
 	parsedState := encodedCallback.ParseState()
 	err := YouTrackAPI.CreateComment(encodedCallback.Submission.TaskID,
-		"\n---\n > "+parsedState.Message+"\n"+parsedState.Link)
+		parsedState.Message+"\n---\n"+parsedState.Link)
 
 	if err != nil {
 		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
@@ -148,7 +149,21 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		return
 	}
 
+	urlToTask := path.Join(YouTrackAPI.Domain, "/youtrack/issue/", encodedCallback.Submission.TaskID)
+
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 		Text: "Comment was created",
+		Attachments: []lib.SlackAttachment{
+			{
+				Fallback: fmt.Sprintf("View Task In YouTrack %s.", urlToTask),
+				Actions: []lib.SlackAction{
+					{
+						Type: "button",
+						Text: "View Task In YouTrack",
+						URL:  urlToTask,
+					},
+				},
+			},
+		},
 	})
 }
