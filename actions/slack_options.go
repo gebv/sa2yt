@@ -34,7 +34,10 @@ func SlackOptionsIndex(c buffalo.Context) error {
 
 	options := selectOptions{}
 	for _, issue := range issues {
-		options.Options = append(options.Options, lib.SlackDialogElementOption{Label: issue.Summary(), Value: issue.ID})
+		options.Options = append(options.Options, lib.SlackDialogElementOption{
+			Label: fmt.Sprintf("%s: %s", issue.EntityID(), issue.Summary),
+			Value: issue.EntityID(),
+		})
 	}
 
 	return c.Render(200, r.JSON(options))

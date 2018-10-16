@@ -25,27 +25,20 @@ type YouTrackProject struct {
 
 // YouTrackIssue - issue from YouTrack
 type YouTrackIssue struct {
-	ID       string      `json:"id"`
-	EntityID string      `json:"entityId"`
-	JiraID   interface{} `json:"jiraId"`
-	Field    []struct {
-		Name  string      `json:"name"`
-		Value interface{} `json:"value"`
-	} `json:"field"`
+	Project struct {
+		Name string `json:"name"`
+		ID   string `json:"id"`
+		Type string `json:"$type"`
+	} `json:"project"`
+	Summary         string `json:"summary"`
+	NumberInProject int    `json:"numberInProject"`
+	ID              string `json:"id"`
+	Type            string `json:"$type"`
 }
 
-// Summary - get summary field from issue
-func (issue *YouTrackIssue) Summary() string {
-	var summary string
-
-	for _, field := range issue.Field {
-		if field.Name == "summary" {
-			summary = field.Value.(string)
-			break
-		}
-	}
-
-	return summary
+// EntityID - issue id with projet name
+func (issue *YouTrackIssue) EntityID() string {
+	return fmt.Sprintf("%s-%d", issue.Project.Name, issue.NumberInProject)
 }
 
 // CreateIssue - create New Issue in YouTrack
@@ -72,13 +65,11 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 // SearchIssues - search Issues in YouTrack
 func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
-	// old end point  - rest/issue
 	path := url.URL{Path: "youtrack/api/issues"}
 	params := path.Query()
 	params.Set("query", query)
 	params.Set("fields", "project(id,name),id,numberInProject,summary")
 	path.RawQuery = params.Encode()
-	// url.URL{Path: "youtrack/api/issues"}
 	response, err := api.sendRequest("GET", &path, map[string]string{})
 
 	if err != nil {
@@ -92,17 +83,14 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 
 	fmt.Printf("SEARCH ISSUES RESP BODY %v\n", string(respBody))
 
-	type searchAnswer struct {
-		Issues []YouTrackIssue `json:"issue"`
-	}
-	var searchResp searchAnswer
+	var searchResp []YouTrackIssue
 
 	err = json.Unmarshal(respBody, &searchResp)
 	if err != nil {
 		return nil, err
 	}
 
-	return searchResp.Issues, nil
+	return searchResp, nil
 }
 
 // CreateComment - add comment to specified Issue
