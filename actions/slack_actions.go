@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"net/url"
 	"path"
 
 	"encoding/json"
@@ -149,7 +150,11 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 		return
 	}
 
-	urlToTask := path.Join(YouTrackAPI.Domain, "/youtrack/issue/", encodedCallback.Submission.TaskID)
+	// https://fader2.myjetbrains.com/youtrack/issue/TEST1-6
+	pathToTask, _ := url.Parse(path.Join("/youtrack/issue/", encodedCallback.Submission.TaskID))
+	domainURL, _ := url.Parse(YouTrackAPI.Domain)
+	urlToTask := domainURL.ResolveReference(pathToTask)
+	fmt.Println("urlToTask -- ", urlToTask)
 
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 		ResponseType: "ephemeral",
@@ -162,7 +167,7 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 					{
 						Type: "button",
 						Text: "View Task With New Comment In YouTrack",
-						URL:  urlToTask,
+						URL:  urlToTask.String(),
 					},
 				},
 			},

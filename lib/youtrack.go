@@ -60,7 +60,6 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 	fmt.Println("Create Issue resp: ", response)
 
 	restURL := response.Header.Get("Location")
-	fmt.Println("Location ---- ", strings.Replace(restURL, "/rest", "", 1))
 	return strings.Replace(restURL, "/rest", "", 1), nil
 }
 
