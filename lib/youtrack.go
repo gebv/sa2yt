@@ -73,13 +73,17 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 // SearchIssues - search Issues in YouTrack
 func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	// old end point  - rest/issue
-	path := url.URL{Path: "youtrack/api/issues"}
-	params := path.Query()
-	params.Set("query", query)
-	params.Set("fields", "project(id,name),id,numberInProject,summary")
-	path.RawQuery = params.Encode()
+	// path := url.URL{Path: "youtrack/api/issues"}
+	// params := path.Query()
+	// params.Set("query", query)
+	// params.Set("fields", "project(id,name),id,numberInProject,summary")
+	// path.RawQuery = params.Encode()
+	jsonStr, _ := json.Marshal(map[string]string{
+		"query":  query,
+		"fields": "project(id,name),id,numberInProject,summary,description",
+	})
 
-	response, err := api.sendRequest("GET", &path, map[string]string{})
+	response, err := api.sendJSONRequest("GET", &url.URL{Path: "youtrack/api/issues"}, jsonStr)
 
 	if err != nil {
 		return nil, err
