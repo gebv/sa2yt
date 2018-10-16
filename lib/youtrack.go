@@ -96,8 +96,14 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 // CreateComment - add comment to specified Issue
 func (api *YouTrackAPI) CreateComment(issueID, comment string) error {
 	path := fmt.Sprintf("youtrack/api/issues/%s/comments", issueID)
-	response, err := api.sendJSONRequest("POST", &url.URL{Path: path}, []byte(`{"text": "test comment"}`))
-	//[]byte(fmt.Sprintf(`{"text": "%s"}`, comment))
+
+	body, err := json.Marshal(map[string]string{"text": comment})
+	if err != nil {
+		return err
+	}
+
+	response, err := api.sendJSONRequest("POST", &url.URL{Path: path}, body)
+	//[]byte(fmt.Sprintf(`{"text": "%s"}`, comment)) []byte(`{"text": "test comment"}`)
 	if err != nil {
 		return err
 	}
