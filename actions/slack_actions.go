@@ -153,7 +153,7 @@ func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	urlToTask := path.Join(YouTrackAPI.Domain, "/youtrack/issue/", encodedCallback.Submission.TaskID)
 
 	lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
-		ResponseType: "in_channel",
+		ResponseType: "ephemeral",
 		Text:         fmt.Sprintf("Comment was added %s", urlToTask),
 		Attachments: []lib.SlackAttachment{
 			{
