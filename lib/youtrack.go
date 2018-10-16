@@ -60,6 +60,7 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 	fmt.Println("Create Issue resp: ", response)
 
 	restURL := response.Header.Get("Location")
+	fmt.Println("Location ---- ", strings.Replace(restURL, "/rest", "", 1))
 	return strings.Replace(restURL, "/rest", "", 1), nil
 }
 
@@ -103,7 +104,6 @@ func (api *YouTrackAPI) CreateComment(issueID, comment string) error {
 	}
 
 	response, err := api.sendJSONRequest("POST", &url.URL{Path: path}, body)
-	//[]byte(fmt.Sprintf(`{"text": "%s"}`, comment)) []byte(`{"text": "test comment"}`)
 	if err != nil {
 		return err
 	}
