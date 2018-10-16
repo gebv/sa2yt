@@ -72,8 +72,9 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 
 // SearchIssues - search Issues in YouTrack
 func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
-	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/rest/issue"}, map[string]string{
-		"filter": query,
+	// old end point  - rest/issue
+	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/api/issues"}, map[string]string{
+		"query": query,
 	})
 
 	if err != nil {
@@ -84,6 +85,8 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("SEARCH ISSUES RESP BODY %v\n", respBody)
 
 	type searchAnswer struct {
 		Issues []YouTrackIssue `json:"issue"`
