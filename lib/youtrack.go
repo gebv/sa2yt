@@ -74,7 +74,8 @@ func (api *YouTrackAPI) CreateIssue(projectID, summary, description string) (str
 func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	// old end point  - rest/issue
 	response, err := api.sendRequest("GET", &url.URL{Path: "youtrack/api/issues"}, map[string]string{
-		"query": query,
+		"query":  query,
+		"fields": "project(id,name),id,numberInProject,summary,description",
 	})
 
 	if err != nil {
