@@ -86,7 +86,7 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 		return nil, err
 	}
 
-	fmt.Printf("SEARCH ISSUES RESP BODY %v\n", respBody)
+	fmt.Printf("SEARCH ISSUES RESP BODY %v\n", string(respBody))
 
 	type searchAnswer struct {
 		Issues []YouTrackIssue `json:"issue"`
