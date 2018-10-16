@@ -78,12 +78,8 @@ func (api *YouTrackAPI) SearchIssues(query string) ([]YouTrackIssue, error) {
 	params.Set("query", query)
 	params.Set("fields", "project(id,name),id,numberInProject,summary")
 	path.RawQuery = params.Encode()
-	jsonStr, _ := json.Marshal(map[string]string{
-		"query":  query,
-		"fields": "project(id,name),id,numberInProject,summary,description",
-	})
 	// url.URL{Path: "youtrack/api/issues"}
-	response, err := api.sendJSONRequest("GET", &path, jsonStr)
+	response, err := api.sendRequest("GET", &path, map[string]string{})
 
 	if err != nil {
 		return nil, err
