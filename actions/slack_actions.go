@@ -89,7 +89,7 @@ func sendNewCommentWindow(encodedCallback *lib.SlackActionCallback) {
 				CallbackID:  "create_comment",
 				State:       encodedCallback.MessageLink(),
 				Title:       "Add new comment to Task",
-				SubmitLabel: "Add Comment",
+				SubmitLabel: "Add",
 				Elements: []lib.SlackDialogResponseElement{
 					{
 						Type:           "select",
