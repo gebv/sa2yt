@@ -103,6 +103,7 @@ func sendNewCommentWindow(encodedCallback *lib.SlackActionCallback) {
 						Type:        "text",
 						Label:       "Comment",
 						Name:        "summary",
+						Optional:    true,
 						Placeholder: "Body Comment",
 					},
 				},

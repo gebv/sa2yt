@@ -93,6 +93,7 @@ type SlackDialogResponseElement struct {
 	Type           string                     `json:"type"`
 	Label          string                     `json:"label"`
 	Name           string                     `json:"name"`
+	Optional       bool                       `json:"optional"`
 	Placeholder    string                     `json:"placeholder"`
 	Hint           string                     `json:"hint"`
 	DataSource     string                     `json:"data_source"`
