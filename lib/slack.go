@@ -206,3 +206,8 @@ func (callback *SlackActionCallback) ParseState() StateData {
 
 	return message
 }
+
+// LinkToMessageText - link to message formatted test
+func (parsedState *StateData) FormattedLink() string {
+	return "\n---\n > " + parsedState.Message + "\n" + parsedState.Link
+}

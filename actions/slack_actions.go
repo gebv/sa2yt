@@ -99,6 +99,12 @@ func sendNewCommentWindow(encodedCallback *lib.SlackActionCallback) {
 						DataSource:     "external",
 						MinQueryLength: 2,
 					},
+					{
+						Type:        "text",
+						Label:       "Comment",
+						Name:        "summary",
+						Placeholder: "Body Comment",
+					},
 				},
 			},
 		},
@@ -110,7 +116,7 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	urlToTask, err := YouTrackAPI.CreateIssue(
 		encodedCallback.Submission.ProjectID,
 		encodedCallback.Submission.Summary,
-		encodedCallback.Submission.Description+"\n---\n > "+parsedState.Message+"\n"+parsedState.Link)
+		encodedCallback.Submission.Description+parsedState.FormattedLink())
 	if err != nil {
 		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
 			ResponseType: "ephemeral",
@@ -140,7 +146,7 @@ func createIssueAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 func createNewCommentAndSendAnswer(encodedCallback *lib.SlackActionCallback) {
 	parsedState := encodedCallback.ParseState()
 	err := YouTrackAPI.CreateComment(encodedCallback.Submission.TaskID,
-		parsedState.Message+"\n---\n"+parsedState.Link)
+		encodedCallback.Submission.Summary+parsedState.FormattedLink())
 
 	if err != nil {
 		lib.SendAnswerToSlack(encodedCallback.ResponseURL, &lib.SlackResponse{
