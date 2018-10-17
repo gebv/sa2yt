@@ -207,7 +207,7 @@ func (callback *SlackActionCallback) ParseState() StateData {
 	return message
 }
 
-// LinkToMessageText - link to message formatted test
+// FormattedLink - formatted link  for youtrack comment
 func (parsedState *StateData) FormattedLink() string {
-	return "\n---\n > " + parsedState.Message + "\n" + parsedState.Link
+	return "\n---\n> " + parsedState.Message + "\n" + parsedState.Link
 }
